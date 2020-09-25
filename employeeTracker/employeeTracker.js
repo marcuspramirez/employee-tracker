@@ -206,6 +206,25 @@ function addEmployee() {
       }
 
     ])
+    .then(function(answer) {
+      // when finished prompting, insert a new employee info into the db with that info
+      connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.firstName,
+          last_name: answer.lastName,
+          role_id: answer.roleID,
+          manager_id: answer.managerID
+          
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Your employee was created successfully!");
+          // re-prompt to the beginning question, "What do you want to do?"
+          start();
+        }
+      );
+    });
 
 }
 
