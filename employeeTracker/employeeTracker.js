@@ -66,7 +66,7 @@ function start() {
 function add() {
   inquirer
     .prompt({
-      name: "action",
+      name: "add",
       type: "list",
       message: "What would you like to add?",
       choices: [
@@ -77,7 +77,7 @@ function add() {
       ]
     })
     .then(function (answer) {
-      switch (answer.action) {
+      switch (answer.add) {
         case "Role":
           addRole();
           break;
@@ -103,51 +103,169 @@ function addRole() {
       {
         name: "roleTitle",
         type: "input",
-        message: "What is the role title?",
-        
+        message: "What is the employee's role title?",
+
       },
       {
         name: "roleSalary",
         type: "input",
-        message: "What is the role salary?",
-        
+        message: "What is the employee's role salary?",
+
       },
       {
 
         name: "roleDepartmentID",
         type: "input",
-        message: "What is the role's department ID?",
-      
+        message: "What is the employee's department ID?",
+
       }
+    ])
+    .then(function(answer) {
+      // when finished prompting, insert a new role into the db with that info
+      connection.query(
+        "INSERT INTO role SET ?",
+        {
+          title: answer.roleTitle,
+          salary: answer.roleSalary,
+          department_id: answer.roleDepartmentID
+          
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Your employee role was created successfully!");
+          // re-prompt to the beginning question, "What do you want to do?"
+          start();
+        }
+      );
+    });
+
+}
+
+
+
+
+
+function addDepartment() {
+  inquirer
+    .prompt({
+      name: "deptName",
+      type: "input",
+      message: "What is the name of the department which you are adding?",
+
+    })
+    .then(function(answer) {
+      // when finished prompting, insert a new department into the db with that info
+      connection.query(
+        "INSERT INTO department SET ?",
+        {
+          
+          name: answer.deptName
+          
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Your department was created successfully!");
+          // re-prompt to the beginning question, "What do you want to do?"
+          start();
+        }
+      );
+    });
+}
+
+
+
+
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        name: "firstName",
+        type: "input",
+        message: "What is the employee's first name?",
+
+      },
+      {
+        name: "lastName",
+        type: "input",
+        message: "What is the employee's last name?",
+
+      },
+      {
+
+        name: "roleID",
+        type: "input",
+        message: "What is the employee's role ID?",
+
+      },
+      {
+
+        name: "managerID",
+        type: "input",
+        message: "What is the employee's manager's ID?",
+
+      }
+
     ])
 
 }
 
-// function addDepartment() {
-//   inquirer
-//     .prompt([
-//       {
-//         name: "roleTitle",
-//         type: "input",
-//         message: "What is the role title?",
-        
-//       },
-//       {
-//         name: "roleSalary",
-//         type: "input",
-//         message: "What is the role salary?",
-        
-//       },
-//       {
+function view() {
+  inquirer
+    .prompt({
+      name: "view",
+      type: "list",
+      message: "What would you like to view?",
+      choices: [
+        "View all employees",
+        "View all employees by roles",
+        "View all employees by departments",
+        "Exit"
+      ]
+    })
+    .then(function (answer) {
+      switch (answer.view) {
+        case "View all employees":
+          viewEmployees();
+          break;
 
-//         name: "roleDepartmentID",
-//         type: "input",
-//         message: "What is the role's department ID?",
-      
-//       }
-//     ])
+        case "View all employees by departments":
+          viewDepartments();
 
-// }
+          break;
+
+        case "View all employees by roles":
+          viewRoles();
+          break;
+
+        case "Exit":
+          connection.end();
+          break;
+      }
+
+    });
+}
+
+function viewEmployees() {
+
+}
+
+function viewDepartments() {
+
+}
+
+function viewRoles() {
+
+}
+
+function update() {
+  inquirer
+  .prompt({
+    name: "updateRole",
+    type: "input",
+    message: "What is the employee's new role?",
+
+  })
+}
 
 
 // Start our server so that it can begin listening to client requests.
