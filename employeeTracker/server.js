@@ -247,7 +247,7 @@ function view() {
           viewEmployees();
           break;
 
-        case "View all employees by departments":
+        case "View employees by departments":
           viewDepartments();
 
           break;
@@ -265,25 +265,107 @@ function view() {
 }
 
 function viewEmployees() {
+    console.log("Viewing employees by department...\n");
+   connection.query("SELECT employee.first_name, employee.last_name, employee.id, role.title, role.salary, role.department_id, employee.manager_id  FROM employee INNER JOIN role on employee.role_id = role.department_id;", function (err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.table(res);
+    start();
+    });
+  }
 
-}
+
 
 function viewDepartments() {
+  connection.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
 
+    console.table(res);
+    start();
+  });
 }
 
 function viewRoles() {
+  connection.query("SELECT * FROM role", function (err, res) {
+    //if (err) throw err;
+
+    console.table(res);
+    start()
+
+  });
 
 }
 
 function update() {
-  inquirer
-  .prompt({
-    name: "updateRole",
-    type: "input",
-    message: "What is the employee's new role?",
 
-  })
+ 
+  connection.query("SELECT first_name FROM employee", function (err, res) {
+    if (err) throw err;
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"employee",
+        message: "Please select employee to update",
+        choices: res.map(emp => emp.first_name)
+      }
+    ])
+    .then(answers => {
+      findRole(answers.employee);
+      start();
+  
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+    
+
+  });
+
+
+} 
+
+function findRole(name) {
+  connection.query("SELECT department_id  FROM role", function (err, res) {
+    if (err) throw err;
+    console.log(res);
+
+    inquirer
+    .prompt([
+      {
+        type: "list",
+        name:"role",
+        message: "Please select desired role to update",
+        choices: res.map(role => role.department_id)
+      }
+    ])
+    .then(answers => {let sql = "UPDATE employee SET role_id = ? WHERE first_name = ?";
+    let role = parseInt(answers.role);
+    let data = [role, name];
+
+// execute the UPDATE statement
+connection.query(sql, data, (error, results, fields) => {
+if (error){
+return console.error(error.message);
+}
+
+});
+      
+
+    })
+    .catch(error => {
+      if(error.isTtyError) {
+        
+      } else {
+        
+      }
+    });
+  });
 }
 
 
