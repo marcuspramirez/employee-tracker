@@ -18,4 +18,5 @@ npm start
 ## Usage
 When app begins, user will be given prompts.  User can choose to add, view, or update employees.
 
-![](assets/employee-tracker.gif)
+![](assets/employee-tracker.gif
+![](assets/epmtrackscreenshot.pmg)
